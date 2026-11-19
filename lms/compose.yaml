@@ -1,0 +1,22 @@
+# Lyrion Music Server (LMS)
+# network_mode host ist nötig, damit Player (Squeezebox, Squeezelite, Sendspin-Clients u. a.)
+# den Server per Broadcast im LAN finden (UDP/TCP 3483, CLI 9090, Web-UI HTTP_PORT).
+services:
+  lms:
+    container_name: lms
+    image: lmscommunity/lyrionmusicserver:latest
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      HTTP_PORT: ${LMS_HTTP_PORT:-9002}
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: ${TZ:-Europe/Zurich}
+    volumes:
+      - ${LMS_CONFIG}:/config:rw
+      - ${MEDIA}/music:/music:ro
+      - ${MEDIA}/playlists:/playlist:rw
+    logging:
+      options:
+        max-size: "100k"
+        max-file: "1"

@@ -1,0 +1,18 @@
+# step-ca: interne Zertifizierungsstelle (Smallstep)
+# Erststart initialisiert die CA in /home/step (Volume STEP_DATA).
+services:
+  step-ca:
+    container_name: step-ca
+    image: smallstep/step-ca:latest
+    restart: unless-stopped
+    ports:
+      - "${CA_PORT:-9000}:9000"
+    environment:
+      DOCKER_STEPCA_INIT_NAME: ${CA_NAME}
+      # Alle Namen/IPs, unter denen Clients die CA erreichen (kommagetrennt)
+      DOCKER_STEPCA_INIT_DNS_NAMES: ${CA_DNS_NAMES}
+      DOCKER_STEPCA_INIT_REMOTE_MANAGEMENT: "true"
+      # legt zusätzlich einen ACME-Provisioner "acme" an
+      DOCKER_STEPCA_INIT_ACME: "true"
+    volumes:
+      - ${STEP_DATA}:/home/step
